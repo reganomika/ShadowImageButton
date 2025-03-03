@@ -70,11 +70,6 @@ public final class ShadowImageButton: UIView {
             make.right.equalToSuperview().inset(contentInsets.right)
             make.centerY.equalToSuperview()
         }
-
-        // Ширина кнопки зависит от содержимого
-        snp.makeConstraints { make in
-            make.width.equalTo(titleLabel.snp.width).offset(contentInsets.left + contentInsets.right + 8 + 24).priority(.high)
-        }
     }
 
     private func addTarget() {
@@ -115,15 +110,13 @@ public final class ShadowImageButton: UIView {
             backgroundImageView.isHidden = true
         }
 
-        // Обновляем констрейнты после изменения содержимого
-        setNeedsLayout()
-        layoutIfNeeded()
+        // Обновляем intrinsic content size
+        invalidateIntrinsicContentSize()
     }
 
     public func updateTitle(title: String) {
         titleLabel.text = title
-        setNeedsLayout()
-        layoutIfNeeded()
+        invalidateIntrinsicContentSize()
     }
 
     public func updateBackgroundImageConfig(_ config: BackgroundImageConfig) {
@@ -147,6 +140,19 @@ public final class ShadowImageButton: UIView {
             layer.shadowRadius = 0
             layer.masksToBounds = true
         }
+    }
+
+    // MARK: - Intrinsic Content Size
+
+    override public var intrinsicContentSize: CGSize {
+        let imageWidth = imageView.isHidden ? 0 : imageView.frame.width
+        let titleWidth = titleLabel.isHidden ? 0 : titleLabel.intrinsicContentSize.width
+        let spacing = imageView.isHidden || titleLabel.isHidden ? 0 : 8 // Отступ между иконкой и текстом
+
+        let totalWidth = imageWidth + titleWidth + CGFloat(spacing) + contentInsets.left + contentInsets.right
+        let totalHeight = max(imageView.frame.height, titleLabel.intrinsicContentSize.height) + contentInsets.top + contentInsets.bottom
+
+        return CGSize(width: totalWidth, height: totalHeight)
     }
 
     // MARK: - Actions
