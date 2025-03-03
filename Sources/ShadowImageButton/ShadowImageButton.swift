@@ -30,14 +30,14 @@ public final class ShadowImageButton: UIView {
         return label
     }()
 
-    private lazy var stackView: UIStackView = {
+    lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [imageView, titleLabel])
         stackView.alignment = .center
         stackView.spacing = 8
         return stackView
     }()
 
-    private var contentInsets: UIEdgeInsets = .zero
+    var contentInsets: UIEdgeInsets = .zero
 
     // MARK: - Initialization
 
