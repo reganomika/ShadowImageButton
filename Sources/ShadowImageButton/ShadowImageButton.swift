@@ -37,9 +37,12 @@ public final class ShadowImageButton: UIView {
         return stackView
     }()
 
+    private var contentInsets: UIEdgeInsets = .zero
+
     // MARK: - Initialization
 
-    public init() {
+    public init(contentInsets: UIEdgeInsets = .zero) {
+        self.contentInsets = contentInsets
         super.init(frame: .zero)
         setupView()
         setupConstraints()
@@ -63,7 +66,12 @@ public final class ShadowImageButton: UIView {
         }
 
         stackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(8)
+            make.edges.equalToSuperview().inset(contentInsets)
+        }
+
+        // Автоматическая ширина кнопки
+        snp.makeConstraints { make in
+            make.width.greaterThanOrEqualTo(stackView).offset(contentInsets.left + contentInsets.right)
         }
     }
 
@@ -101,19 +109,7 @@ public final class ShadowImageButton: UIView {
         }
 
         if let backgroundImageConfig {
-            backgroundImageView.image = backgroundImageConfig.image
-            backgroundImageView.layer.cornerRadius = backgroundImageConfig.cornerRadius
-            backgroundImageView.isHidden = false
-
-            layer.cornerRadius = backgroundImageConfig.cornerRadius
-
-            if let shadowConfig = backgroundImageConfig.shadowConfig {
-                layer.shadowColor = shadowConfig.color.cgColor
-                layer.shadowOpacity = shadowConfig.opacity
-                layer.shadowOffset = shadowConfig.offset
-                layer.shadowRadius = shadowConfig.radius
-                layer.masksToBounds = false
-            }
+            updateBackgroundImageConfig(backgroundImageConfig)
         } else {
             backgroundImageView.isHidden = true
         }
@@ -121,6 +117,28 @@ public final class ShadowImageButton: UIView {
 
     public func updateTitle(title: String) {
         titleLabel.text = title
+    }
+
+    public func updateBackgroundImageConfig(_ config: BackgroundImageConfig) {
+        backgroundImageView.image = config.image
+        backgroundImageView.layer.cornerRadius = config.cornerRadius
+        backgroundImageView.isHidden = false
+
+        layer.cornerRadius = config.cornerRadius
+
+        if let shadowConfig = config.shadowConfig {
+            layer.shadowColor = shadowConfig.color.cgColor
+            layer.shadowOpacity = shadowConfig.opacity
+            layer.shadowOffset = shadowConfig.offset
+            layer.shadowRadius = shadowConfig.radius
+            layer.masksToBounds = false
+        } else {
+            layer.shadowColor = nil
+            layer.shadowOpacity = 0
+            layer.shadowOffset = .zero
+            layer.shadowRadius = 0
+            layer.masksToBounds = true
+        }
     }
 
     // MARK: - Actions
