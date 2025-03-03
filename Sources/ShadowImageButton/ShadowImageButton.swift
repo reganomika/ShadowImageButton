@@ -23,21 +23,21 @@ public final class ShadowImageButton: UIView {
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.5
         label.textAlignment = .center
         return label
     }()
 
-    public lazy var stackView: UIStackView = {
+    private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [imageView, titleLabel])
         stackView.alignment = .center
         stackView.spacing = 8
         return stackView
     }()
 
-    public var contentInsets: UIEdgeInsets = .zero
+    private var contentInsets: UIEdgeInsets = .zero
 
     // MARK: - Initialization
 
@@ -69,9 +69,9 @@ public final class ShadowImageButton: UIView {
             make.edges.equalToSuperview().inset(contentInsets)
         }
 
-        // Автоматическая ширина кнопки
+        // Убедимся, что ширина кнопки зависит от содержимого
         snp.makeConstraints { make in
-            make.width.greaterThanOrEqualTo(stackView).offset(contentInsets.left + contentInsets.right)
+            make.width.equalTo(stackView).offset(contentInsets.left + contentInsets.right).priority(.high)
         }
     }
 
@@ -113,10 +113,16 @@ public final class ShadowImageButton: UIView {
         } else {
             backgroundImageView.isHidden = true
         }
+
+        // Обновляем констрейнты после изменения содержимого
+        setNeedsLayout()
+        layoutIfNeeded()
     }
 
     public func updateTitle(title: String) {
         titleLabel.text = title
+        setNeedsLayout()
+        layoutIfNeeded()
     }
 
     public func updateBackgroundImageConfig(_ config: BackgroundImageConfig) {
@@ -133,6 +139,7 @@ public final class ShadowImageButton: UIView {
             layer.shadowRadius = shadowConfig.radius
             layer.masksToBounds = false
         } else {
+            // Убираем тень, если shadowConfig отсутствует
             layer.shadowColor = nil
             layer.shadowOpacity = 0
             layer.shadowOffset = .zero
