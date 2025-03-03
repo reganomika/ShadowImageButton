@@ -110,13 +110,13 @@ public final class ShadowImageButton: UIView {
             backgroundImageView.isHidden = true
         }
 
-        // Обновляем intrinsic content size
-        invalidateIntrinsicContentSize()
+        // Обновляем размер кнопки
+        updateSize()
     }
 
     public func updateTitle(title: String) {
         titleLabel.text = title
-        invalidateIntrinsicContentSize()
+        updateSize()
     }
 
     public func updateBackgroundImageConfig(_ config: BackgroundImageConfig) {
@@ -142,17 +142,18 @@ public final class ShadowImageButton: UIView {
         }
     }
 
-    // MARK: - Intrinsic Content Size
+    // MARK: - Update Size
 
-    override public var intrinsicContentSize: CGSize {
-        let imageWidth = imageView.isHidden ? 0 : imageView.frame.width
-        let titleWidth = titleLabel.isHidden ? 0 : titleLabel.intrinsicContentSize.width
-        let spacing = imageView.isHidden || titleLabel.isHidden ? 0 : 8 // Отступ между иконкой и текстом
-
-        let totalWidth = imageWidth + titleWidth + CGFloat(spacing) + contentInsets.left + contentInsets.right
-        let totalHeight = max(imageView.frame.height, titleLabel.intrinsicContentSize.height) + contentInsets.top + contentInsets.bottom
-
-        return CGSize(width: totalWidth, height: totalHeight)
+    private func updateSize() {
+        let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: UIView.layoutFittingCompressedSize.height)
+        let size = systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .fittingSizeLevel)
+        
+        snp.updateConstraints { make in
+            make.width.equalTo(size.width)
+        }
+        
+        setNeedsLayout()
+        layoutIfNeeded()
     }
 
     // MARK: - Actions
