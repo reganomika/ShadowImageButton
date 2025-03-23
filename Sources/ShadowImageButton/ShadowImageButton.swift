@@ -100,9 +100,10 @@ public final class ShadowImageButton: UIView {
             } else {
                 imageView.isHidden = true
                 
-                titleLabel.snp.updateConstraints { make in
+                titleLabel.snp.remakeConstraints { make in
                     make.left.equalToSuperview().inset(contentInsets.left)
                     make.right.equalToSuperview().inset(contentInsets.right)
+                    make.centerY.equalToSuperview()
                 }
             }
         } else {
