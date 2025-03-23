@@ -62,11 +62,11 @@ public final class ShadowImageButton: UIView {
         imageView.snp.makeConstraints { make in
             make.left.equalToSuperview().inset(contentInsets.left)
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(24) // Примерный размер иконки
+            make.width.height.equalTo(24)
         }
 
         titleLabel.snp.makeConstraints { make in
-            make.left.equalTo(imageView.snp.right).offset(8) // Отступ между иконкой и текстом
+            make.left.equalTo(imageView.snp.right).offset(8)
             make.right.equalToSuperview().inset(contentInsets.right)
             make.centerY.equalToSuperview()
         }
@@ -99,6 +99,11 @@ public final class ShadowImageButton: UIView {
                 imageView.isHidden = false
             } else {
                 imageView.isHidden = true
+                
+                titleLabel.snp.updateConstraints { make in
+                    make.left.equalToSuperview().inset(contentInsets.left)
+                    make.right.equalToSuperview().inset(contentInsets.right)
+                }
             }
         } else {
             titleLabel.isHidden = true
@@ -110,14 +115,10 @@ public final class ShadowImageButton: UIView {
         } else {
             backgroundImageView.isHidden = true
         }
-
-        // Обновляем размер кнопки
-        updateSize()
     }
 
     public func updateTitle(title: String) {
         titleLabel.text = title
-        updateSize()
     }
 
     public func updateBackgroundImageConfig(_ config: BackgroundImageConfig) {
@@ -141,20 +142,6 @@ public final class ShadowImageButton: UIView {
             layer.shadowRadius = 0
             layer.masksToBounds = true
         }
-    }
-
-    // MARK: - Update Size
-
-    private func updateSize() {
-        let targetSize = CGSize(width: UIView.layoutFittingCompressedSize.width, height: UIView.layoutFittingCompressedSize.height)
-        let size = systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .fittingSizeLevel, verticalFittingPriority: .fittingSizeLevel)
-        
-        snp.updateConstraints { make in
-            make.width.equalTo(size.width)
-        }
-        
-        setNeedsLayout()
-        layoutIfNeeded()
     }
 
     // MARK: - Actions
