@@ -88,6 +88,7 @@ public final class ShadowImageButton: UIView {
                 titleLabel.text = title
                 titleLabel.textColor = buttonConfig.textColor
                 titleLabel.font = buttonConfig.font
+                titleLabel.textAlignment = buttonConfig.alignment
                 titleLabel.isHidden = false
             } else {
                 titleLabel.isHidden = true
