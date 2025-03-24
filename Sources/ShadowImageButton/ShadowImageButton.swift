@@ -79,8 +79,7 @@ public final class ShadowImageButton: UIView {
     ) {
         
         stackView.snp.makeConstraints { make in
-            make.left.equalToSuperview().inset(contentInsets.left)
-            make.right.equalToSuperview().inset(contentInsets.right)
+            make.centerX.equalToSuperview()
             make.top.equalToSuperview().inset(contentInsets.top)
             make.bottom.edges.equalToSuperview().inset(contentInsets.bottom)
         }
