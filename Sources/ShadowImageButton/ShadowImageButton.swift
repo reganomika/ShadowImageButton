@@ -29,6 +29,13 @@ public final class ShadowImageButton: UIView {
         label.textAlignment = .center
         return label
     }()
+    
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [imageView, titleLabel])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        return stackView
+    }()
 
     private var contentInsets: UIEdgeInsets = .zero
 
@@ -50,25 +57,12 @@ public final class ShadowImageButton: UIView {
 
     private func setupView() {
         addSubview(backgroundImageView)
-        addSubview(imageView)
-        addSubview(titleLabel)
+        addSubview(stackView)
     }
 
     private func setupConstraints() {
         backgroundImageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-        }
-
-        imageView.snp.makeConstraints { make in
-            make.left.equalToSuperview().inset(contentInsets.left)
-            make.centerY.equalToSuperview()
-            make.width.height.equalTo(24)
-        }
-
-        titleLabel.snp.makeConstraints { make in
-            make.left.equalTo(imageView.snp.right).offset(8)
-            make.right.equalToSuperview().inset(contentInsets.right)
-            make.centerY.equalToSuperview()
         }
     }
 
@@ -83,6 +77,14 @@ public final class ShadowImageButton: UIView {
         buttonConfig: ButtonConfig?,
         backgroundImageConfig: BackgroundImageConfig?
     ) {
+        
+        stackView.snp.makeConstraints { make in
+            make.left.equalToSuperview().inset(contentInsets.left)
+            make.right.equalToSuperview().inset(contentInsets.right)
+            make.top.equalToSuperview().inset(contentInsets.top)
+            make.bottom.edges.equalToSuperview().inset(contentInsets.bottom)
+        }
+        
         if let buttonConfig {
             if let title = buttonConfig.title {
                 titleLabel.text = title
@@ -97,14 +99,14 @@ public final class ShadowImageButton: UIView {
             if let image = buttonConfig.image {
                 imageView.image = image
                 imageView.isHidden = false
+                
+                imageView.snp.makeConstraints { make in
+                    make.size.equalTo(buttonConfig.imageSize)
+                }
+                
+                stackView.spacing = buttonConfig.imageInset
             } else {
                 imageView.isHidden = true
-                
-                titleLabel.snp.remakeConstraints { make in
-                    make.left.equalToSuperview().inset(contentInsets.left)
-                    make.right.equalToSuperview().inset(contentInsets.right)
-                    make.centerY.equalToSuperview()
-                }
             }
         } else {
             titleLabel.isHidden = true
@@ -136,7 +138,6 @@ public final class ShadowImageButton: UIView {
             layer.shadowRadius = shadowConfig.radius
             layer.masksToBounds = false
         } else {
-            // Убираем тень, если shadowConfig отсутствует
             layer.shadowColor = nil
             layer.shadowOpacity = 0
             layer.shadowOffset = .zero
